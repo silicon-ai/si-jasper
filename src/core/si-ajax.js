@@ -2,7 +2,7 @@ import {SiElement} from './si-element.js'
 import {SiHttpRequest} from './si-net.js'
 import {SiAsync} from './si-async.js'
 
-export class SiAjax extends SiElement {
+class SiAjax extends SiElement {
   static get is() { return 'si-ajax' }
   static get properties() {
     return {

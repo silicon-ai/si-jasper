@@ -1,9 +1,9 @@
 import '../core/si-boot.js'
 
-import {SiElement, html} from '../core/si-element.js'
+import {SiElement, html, css} from '../core/si-element.js'
 import {SiAsync} from '../core/si-async.js'
 
-export class SiSelector extends SiElement {
+class SiSelector extends SiElement {
 
   static get is() { return 'si-selector' }
 
@@ -20,6 +20,7 @@ export class SiSelector extends SiElement {
   }
 
   select(index, flag = true) {
+    console.log("si-selector::select", index, flag)
     if (typeof index !== 'number') {
       if (!this.items.includes(index)) return
       index = this.items.indexOf(index)
@@ -33,7 +34,7 @@ export class SiSelector extends SiElement {
   }
 
   selectIndex(index, flag = true) {
-    console.log('si-selector::selectIndex', index, flag)
+    console.log('si-selector::selectIndex', index, flag, this._vector)
     if (this._vector[index] === Boolean(flag)) return
     if (!this.multi) this.clearSelection()
     this._vector[index] = flag
@@ -70,6 +71,7 @@ export class SiSelector extends SiElement {
       new CustomEvent('select', {
         bubbles: true,
         composed: true,
+        cancelable: true,
         detail: {
           selection: [...this._vector],
           selectedItems: this.selectedItems
@@ -77,11 +79,10 @@ export class SiSelector extends SiElement {
       })
     )
   }
-  render() {
-    html`
-      <style>
-        :host { display: none }
-      </style>
+
+  static get styles() {
+    return css`
+      :host { display: none }
     `
   }
 }

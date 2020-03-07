@@ -1,7 +1,7 @@
-import {SiTrackableElement, html} from '../core/si-element.js'
+import {SiTrackableElement, html, css} from '../core/si-element.js'
 import {SiAsync} from '../core/si-async.js'
 
-export class SiSplitter extends SiTrackableElement {
+class SiSplitter extends SiTrackableElement {
   static get is() { return 'si-splitter' }
 
   static get properties() {
@@ -65,28 +65,30 @@ export class SiSplitter extends SiTrackableElement {
     this.classList.toggle('horizontal', this.horizontal);
   }
 
+  static get styles() {
+    return css`
+      :host {
+        display: block;
+        width: 10px;
+        background: #efefef;
+        box-shadow: inset 0 0 2px 1px #ccc;
+        cursor: col-resize;
+      }
+
+      :host(.horizontal) {
+        width: auto;
+        height: 10px;
+        cursor: row-resize;
+      }
+
+      :host(:hover, :active) {
+        background-color: #ddd;
+      }
+    `
+  }
+
   render() {
     return html`
-      <style>
-        :host {
-          display: block;
-          width: 10px;
-          background: #efefef;
-          box-shadow: inset 0 0 2px 1px #ccc;
-          cursor: col-resize;
-        }
-
-        :host(.horizontal) {
-          width: auto;
-          height: 10px;
-          cursor: row-resize;
-        }
-
-        :host(:hover, :active) {
-          background-color: #ddd;
-        }
-      </style>
-
       <slot></slot>
     `
   }

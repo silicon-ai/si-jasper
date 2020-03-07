@@ -1,9 +1,9 @@
-import {SiElement, html} from '../core/si-element.js'
+import {SiElement, html, css} from '../core/si-element.js'
 
 import '../core/si-selector.js'
 import './si-checkbox.js'
 
-export class SiFacet extends SiElement {
+class SiFacet extends SiElement {
   static get is() { return "si-facet" }
   static get properties() {
     return {
@@ -69,30 +69,32 @@ export class SiFacet extends SiElement {
     )
   }
 
+  static get styles() {
+    return css`
+      :host {
+        display: block;
+      }
+
+      .si-badge {
+        vertical-align: middle;
+        display: inline-block;
+        height: 16px;
+        border-radius: 20px;
+        font-weight: 600;
+        background: #667;
+        color: white;
+        font-size: 11px;
+        box-sizing: border-box;
+        padding: 2px 4px;
+      }
+    `
+  }
+
   render() {
     return html`
-      <style>
-        :host {
-          display: block;
-        }
-
-        .si-badge {
-          vertical-align: middle;
-          display: inline-block;
-          height: 16px;
-          border-radius: 20px;
-          font-weight: 600;
-          background: #667;
-          color: white;
-          font-size: 11px;
-          box-sizing: border-box;
-          padding: 2px 4px;
-        }
-      </style>
-
       <si-selector id="selector"
         items=${this.items}
-        on-select=${this._onSelect.bind(this)}
+        @select=${this._onSelect.bind(this)}
         multi toggle>
       </si-selector>
 
@@ -102,7 +104,7 @@ export class SiFacet extends SiElement {
         <si-hbox>
           <div flex>
             <si-checkbox
-              checked?=${this._isSelected(item)}
+              ?checked=${this._isSelected(item)}
               on-change=${(ev) => this._toggleSelection(i, ev.detail.checked)}>
               ${this.format(item)}
             </si-checkbox>

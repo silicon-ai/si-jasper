@@ -1,8 +1,8 @@
-import {SiElement, html} from '../core/si-element.js'
+import {SiElement, html, css} from '../core/si-element.js'
 
 import './si-flexbox.js'
 
-export class SiExpander extends SiElement {
+class SiExpander extends SiElement {
   static get is() { return 'si-expander' }
   static get properties() {
     return {
@@ -23,27 +23,29 @@ export class SiExpander extends SiElement {
     }
   }
 
+  static get styles() {
+    return css`
+      :host {
+        display: block;
+        line-height: 24px;
+      }
+
+      #body {
+        overflow: hidden;
+        height: 0px;
+        padding-left: 24px;
+        line-height: 24px;
+      }
+
+      :host([opened]) #body {
+        height: auto;
+      }
+    `
+  }
+
   render() {
     return html`
-      <style>
-        :host {
-          display: block;
-          line-height: 24px;
-        }
-
-        #body {
-          overflow: hidden;
-          height: 0px;
-          padding-left: 24px;
-          line-height: 24px;
-        }
-
-        :host([opened]) #body {
-          height: auto;
-        }
-
-      </style>
-      <div on-click=${this._toggle.bind(this)}><slot name="head"></slot></div>
+      <div @click=${this._toggle.bind(this)}><slot name="head"></slot></div>
       <div id="body"><slot></slot></div>
     `
   }

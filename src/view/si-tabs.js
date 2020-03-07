@@ -1,11 +1,16 @@
-import {SiElement, html} from '../core/si-element.js'
+import {SiElement, html, css} from '../core/si-element.js'
 import {SiAsync} from '../core/si-async.js'
 
-export class SiTabs extends SiElement {
+class SiTabs extends SiElement {
   static get is() { return 'si-tabs' }
 
   static get properties() {
-    return { }
+    return {
+      orientation: {
+        type: String,
+        value: "horizontal"
+      }
+    }
   }
 
   ready() {
@@ -13,22 +18,6 @@ export class SiTabs extends SiElement {
     this.slide = this.shadowRoot.querySelector('#slide')
 
     this.setAttribute('tabindex', '0')
-
-    /*
-    this.addEventListener('keydown', (ev) => {
-      switch (ev.key) {
-        case 'ArrowLeft':
-          this._focusNext()
-          break
-        case 'ArrowRight':
-          this._focusPrevious()
-          break
-        default:
-          this._focusActivate()
-          break
-      }
-    })
-    */
 
     this.tabs.forEach((tab) => {
       tab.setAttribute('tabindex', '-1')
@@ -72,44 +61,61 @@ export class SiTabs extends SiElement {
 
   async _updateSlide() {
     await SiAsync.yieldThen
-    this.slide.style.left = this.selectedTab.offsetLeft + 'px'
-    this.slide.style.width = this.selectedTab.offsetWidth + 'px'
+    switch (this.orientation) {
+      case "horizontal":
+        this.slide.style.left = this.selectedTab.offsetLeft + 'px'
+        this.slide.style.width = this.selectedTab.offsetWidth + 'px'
+        break
+      case "vertical":
+        this.slide.style.top = this.selectedTab.offsetTop + 'px'
+        this.slide.style.height = this.selectedTab.offsetHeight + 'px'
+        this.slide.style.left = this.selectedTab.offsetWidth + 'px'
+        break
+    }
   }
 
   get selectedTab() {
     return this.tabs[this.selected]
   }
 
-  _focusNext() {
+  static get styles() {
+    return css`
+      :host {
+        display: block;
+        box-sizing: border-box;
+        margin-left: 10px;
+        position: relative;
+        transition: color 0.3s ease-in;
+      }
 
+      :host(:focus) {
+        outline: none;
+      }
+
+      #slide {
+        width: 0px;
+        background: var(--slide-color-dark, 'yellowgreen');
+        height: 2px;
+        left: 0px;
+        bottom: 0px;
+        transition: left 0.3s ease-out, width 0.3s ease-out;
+        position: relative;
+      }
+
+      :host([orientation="vertical"]) #slide {
+        height: 0px;
+        background: var(--slide-color-dark, 'yellowgreen');
+        width: 2px;
+        top: 0px;
+        right: 0px;
+        transition: top 0.3s ease-out, height 0.3s ease-out;
+        position: absolute;
+      }
+    `
   }
 
   render({slideColor}) {
     return html`
-      <style>
-        :host {
-          display: block;
-          box-sizing: border-box;
-          margin-left: 10px;
-          position: relative;
-          transition: color 0.3s ease-in;
-        }
-
-        :host(:focus) {
-          outline: none;
-        }
-
-        #slide {
-          width: 0px;
-          background: var(--slide-color-dark, 'yellowgreen');
-          height: 2px;
-          left: 0px;
-          bottom: 0px;
-          transition: left 0.3s ease-out, width 0.3s ease-out;
-          position: relative;
-        }
-      </style>
-
       <slot></slot>
       <div id="slide"></div>
     `

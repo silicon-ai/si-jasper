@@ -1,6 +1,6 @@
 import {SiElement, html} from '../core/si-element.js'
 
-export class SiLocation extends SiElement {
+class SiLocation extends SiElement {
   static get is() { return "si-location" }
 
   static properties() {

@@ -1,11 +1,7 @@
-import {SiElement, html} from '../core/si-element.js'
+import {SiElement, html, css} from '../core/si-element.js'
 
-export class SiPages extends SiElement {
+class SiPages extends SiElement {
   static get is() { return 'si-pages' }
-
-  ready() {
-    super.ready()
-  }
 
   set selected(index) {
     if (index === undefined) return
@@ -20,18 +16,21 @@ export class SiPages extends SiElement {
     return this._selected
   }
 
+  static get styles() {
+    return css`
+      :host {
+        display: block;
+        box-sizing: border-box;
+      }
+
+      ::slotted(:not(.si-page-selected)) {
+        display: none !important;
+      }
+    `
+  }
+
   render(props) {
     return html`
-      <style>
-        :host {
-          display: block;
-          box-sizing: border-box;
-        }
-
-        ::slotted(:not(.si-page-selected)) {
-          display: none !important;
-        }
-      </style>
       <slot></slot>
     `
   }

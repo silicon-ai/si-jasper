@@ -1,4 +1,4 @@
-import {render as nativeRender, html, svg} from '../../node_modules/lit-html/lib/lit-extended.js'
+import {render as nativeRender, html, svg} from '../../node_modules/lit-html/lit-html.js'
 import {render as shadyRender} from '../../node_modules/lit-html/lib/shady-render.js'
 
 
@@ -52,9 +52,19 @@ class SiElement extends HTMLElement {
     if (result) render(result, this)
   }
 
+  insertStyles() {
+    const styles = this.constructor.styles
+    if (styles) {
+      const style = document.createElement('style')
+      style.textContent = styles
+      this.shadowRoot.appendChild(style)
+    }
+  }
+
   async connectedCallback() {
     this.attached()
     this.flushState()
+    this.insertStyles()
     this.ready()
   }
 
@@ -176,7 +186,7 @@ function defineGetter(prototype, key, property) {
   if (typeof property.value !== undefined) {
     if (typeof property.value === 'function') {
       return function get() {
-        if (this[state][key] === undefined) {
+        if (this[state][key] === undefined || this[state][key] === null) {
           return property.value.call(this)
         }
         return this[state][key]
@@ -184,7 +194,7 @@ function defineGetter(prototype, key, property) {
     }
     else {
       return function get() {
-        if (this[state][key] === undefined) {
+        if (this[state][key] === undefined || this[state][key] === null) {
           return property.value
         }
         return this[state][key]
@@ -238,4 +248,8 @@ function camelCase(s) {
   return s.replace(/-([a-z])/g, _ => _[1].toUpperCase())
 }
 
-export { SiElement, SiTrackableElement, render, html, svg, state }
+function css(strings, ...values) {
+  return values.reduce((acc, v, idx) => acc + String(v) + strings[idx + 1], strings[0])
+}
+
+export { SiElement, SiTrackableElement, render, html, svg, css, state }

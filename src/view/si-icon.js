@@ -1,8 +1,8 @@
-import {SiElement, html, svg} from '../core/si-element.js'
+import {SiElement, html, css} from '../core/si-element.js'
 
 import {SiIconSet} from './si-iconset.js'
 
-export class SiIcon extends SiElement {
+class SiIcon extends SiElement {
   static get is() { return 'si-icon' }
 
   static get properties() {
@@ -21,9 +21,8 @@ export class SiIcon extends SiElement {
     return SiIconSet.registry[prefix].cloneIcon(icon)
   }
 
-  render() {
-    return html`
-      <style>
+  static get styles() {
+    return css`
       :host {
         display: inline-block;
         width: 24px;
@@ -40,8 +39,11 @@ export class SiIcon extends SiElement {
         width: 100%;
         height: 100%;
       }
-      </style>
+    `
+  }
 
+  render() {
+    return html`
       ${this.cloneIcon()}
     `
   }

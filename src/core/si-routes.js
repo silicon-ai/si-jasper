@@ -1,4 +1,4 @@
-import {SiElement, html} from '../core/si-element.js'
+import {SiElement, html, css} from '../core/si-element.js'
 import {SiAsync} from '../core/si-async.js'
 
 import './si-location.js'
@@ -44,11 +44,14 @@ class SiRoutes extends SiElement {
     }
   }
 
+  static get styles() {
+    return css`
+      :host { display: none }
+    `
+  }
+
   render() {
     return html`
-      <style>
-      :host { display: none }
-      </style>
       <si-location></si-location>
       <slot></slot>
     `

@@ -1,4 +1,4 @@
-import {SiElement, html} from '../core/si-element.js'
+import {SiElement, html, css} from '../core/si-element.js'
 
 export class SiItem extends SiElement {
   static get is() { return 'si-item' }
@@ -10,15 +10,18 @@ export class SiItem extends SiElement {
   ready() {
     super.ready()
   }
-  render() {
-    return html`
-      <style>
+  static get styles() {
+    return css`
       :host {
         padding: 4px;
         display: block;
         line-height: 28px;
       }
-      </style>
+    `
+  }
+
+  render() {
+    return html`
       <slot></slot>
     `
   }

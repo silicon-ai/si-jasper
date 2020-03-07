@@ -1,31 +1,28 @@
-import {SiElement, html} from '../core/si-element.js'
-import {layoutStyles, shadowStyles} from './si-styles.js'
+import {SiElement, html, css} from '../core/si-element.js'
 
 
-export class SiGrid extends SiElement {
+class SiGrid extends SiElement {
   static get is() { return 'si-grid' }
   static get properties() {
     return {
       items: Array,
     }
   }
-  ready() {
-    super.ready()
-  }
 
   get columns() {
     return Array.from(this.querySelectorAll('si-grid-column'))
   }
 
-  render() {
-    return html`
-      <style>
+  static get styles() {
+    return css`
       :host {
         display: table;
         background: white;
       }
-      </style>
-
+    `
+  }
+  render() {
+    return html`
       <thead>
         <tr><slot></slot></tr>
       </thead>
@@ -54,16 +51,17 @@ class SiGridColumn extends SiElement {
       }
     }
   }
-  ready() {
-    super.ready()
+
+  static get styles() {
+    return css`
+      :host {
+        display: table-cell;
+      }
+    `
   }
+
   render() {
     return html`
-      <style>
-        :host {
-          display: table-cell;
-        }
-      </style>
       <slot></slot>
     `
   }

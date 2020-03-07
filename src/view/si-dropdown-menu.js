@@ -1,11 +1,11 @@
-import {SiElement, html} from '../core/si-element.js'
+import {SiElement, html, css} from '../core/si-element.js'
 import {layoutStyles, shadowStyles} from './si-styles.js'
 import {SiAsync} from '../core/si-async.js'
 
 import './si-icons.js'
 import './si-icon.js'
 
-export class SiDropdownMenu extends SiElement {
+class SiDropdownMenu extends SiElement {
   static get is() { return 'si-dropdown-menu' }
   static get properties() {
     return {
@@ -105,37 +105,38 @@ export class SiDropdownMenu extends SiElement {
     ev.stopPropagation()
   }
 
-  render() {
-    return html`
-      <style>
-        :host {
-          position: relative;
-          display: inline-block;
-        }
+  static get styles() {
+    return css`
+      :host {
+        position: relative;
+        display: inline-block;
+      }
 
-        #dropdown {
-          display: none;
-          box-sizing: border-box;
-        }
+      #dropdown {
+        display: none;
+        box-sizing: border-box;
+      }
 
-        #dropdown[open] {
-          display: block;
-          position: absolute;
-          top: 32px;
-          left: 5px;
-          right: 5px;
-          z-index: 9;
-        }
+      #dropdown[open] {
+        display: block;
+        position: absolute;
+        top: 32px;
+        left: 5px;
+        right: 5px;
+        z-index: 9;
+      }
 
-        #input, #container {
-          cursor: pointer !important;
-        }
-
-      </style>
+      #input, #container {
+        cursor: pointer !important;
+      }
 
       ${layoutStyles}
       ${shadowStyles}
+    `
+  }
 
+  render() {
+    return html`
       <div id="container" class="layout horizontal">
         <si-input class="flex" id="input"
           tabindex="0"

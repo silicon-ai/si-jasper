@@ -1,9 +1,8 @@
-import {SiElement, html} from '../core/si-element.js'
-import {SiAsync} from '../core/si-async.js'
+import {SiElement, html, css} from '../core/si-element.js'
 
 const input = Symbol('input')
 
-export class SiInput extends SiElement {
+class SiInput extends SiElement {
   static get is() { return 'si-input' }
   static get properties() {
     return {
@@ -57,54 +56,57 @@ export class SiInput extends SiElement {
     }))
   }
 
+  static get styles() {
+    return css`
+      :host {
+        display: block;
+        border-bottom: 1px solid transparent;
+        transition: border 0.3s ease-in-out;
+        margin: 5px;
+      }
+
+      #container {
+        display: flex;
+        flex-direction: row;
+        border-bottom: 1px solid #CCD;
+      }
+
+      #input {
+        display: block;
+        box-sizing: border-box;
+        border: none;
+        outline: none;
+        width: 100%;
+        height: 24px;
+        font-size: 14px;
+        cursor: inherit;
+        color: inherit;
+        background: inherit;
+      }
+
+      :host(:focus-within), #container:focus-within {
+        outline: none;
+        border-bottom: 1px solid #667;
+      }
+    `
+  }
+
   render() {
     return html`
-      <style>
-        :host {
-          display: block;
-          border-bottom: 1px solid transparent;
-          transition: border 0.3s ease-in-out;
-          margin: 5px;
-        }
-
-        #container {
-          display: flex;
-          flex-direction: row;
-          border-bottom: 1px solid #CCD;
-        }
-
-        #input {
-          display: block;
-          box-sizing: border-box;
-          border: none;
-          outline: none;
-          width: 100%;
-          height: 24px;
-          font-size: 14px;
-          cursor: inherit;
-          color: inherit;
-          background: inherit;
-        }
-
-        :host(:focus-within), #container:focus-within {
-          outline: none;
-          border-bottom: 1px solid #667;
-        }
-      </style>
       <div id="container">
         <slot name="prefix"></slot>
         <input id="input"
-          type$=${this.type}
-          value=${this.value}
+          .type=${this.type}
+          .value=${this.value || ""}
           min=${this.min}
           max=${this.max}
           step=${this.step}
-          readonly?=${this.readonly}
+          ?readonly=${this.readonly}
           pattern=${this.pattern}
           autocomplete=${this.autocomplete}
           autocorrect=${this.autocorrect}
           autocapitalize=${this.autocapitalize}
-          placeholder=${this.placeholder}>
+          placeholder=${this.placeholder || ""}>
         </input>
         <slot name="suffix"></slot>
       </div>

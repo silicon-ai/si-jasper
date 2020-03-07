@@ -1,8 +1,8 @@
-import {SiElement, html} from '../core/si-element.js'
+import {SiElement, html, css} from '../core/si-element.js'
 
 import {shadowStyles, layoutStyles} from '../view/si-styles.js'
 
-export class SiDialog extends SiElement {
+class SiDialog extends SiElement {
   static get is() { return 'si-dialog' }
   static get properties() {
     return {
@@ -60,57 +60,59 @@ export class SiDialog extends SiElement {
     }
   }
 
-  render() {
-    return html`
-      <style>
-        :host {
-          display: none;
-          position: absolute;
-          outline: none;
-        }
+  static get styles() {
+    return css`
+      :host {
+        display: none;
+        position: absolute;
+        outline: none;
+      }
 
-        :host([open]) {
-          display: inline-block;
-        }
+      :host([open]) {
+        display: inline-block;
+      }
 
-        #backdrop {
-          display: none;
-          position: fixed;
-          top: 0px;
-          right: 0px;
-          bottom: 0px;
-          left: 0px;
-          background-color: rgba(0, 0, 0, 0.5);
-          z-index: 99;
-        }
+      #backdrop {
+        display: none;
+        position: fixed;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 99;
+      }
 
-        :host([open][backdrop]) #backdrop {
-          display: block;
-        }
+      :host([open][backdrop]) #backdrop {
+        display: block;
+      }
 
-        #header, #content, #footer {
-          padding: 10px;
-        }
+      #header, #content, #footer {
+        padding: 10px;
+      }
 
-        #header:not(:empty) {
-          border-bottom: 1px solid #DDE;
-        }
+      #header:not(:empty) {
+        border-bottom: 1px solid #DDE;
+      }
 
-        #footer:not(:empty) {
-          border-top: 1px solid #DDE;
-        }
+      #footer:not(:empty) {
+        border-top: 1px solid #DDE;
+      }
 
-        #container {
-          z-index: 100;
-          position: relative;
-          height: 100%;
-          background-color: white;
-        }
-      </style>
+      #container {
+        z-index: 100;
+        position: relative;
+        height: 100%;
+        background-color: white;
+      }
 
       ${shadowStyles}
       ${layoutStyles}
+    `
+  }
 
+  render() {
+    return html`
       <div id="backdrop" on-mousedown=${(ev) => this.close('cancel')}></div>
 
       <div id="container" class="layout vertical shadow-elevation-6">

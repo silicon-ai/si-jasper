@@ -1,8 +1,8 @@
-import {SiElement, html} from '../core/si-element.js'
+import {SiElement, html, css} from '../core/si-element.js'
 
 import '../core/si-selector.js'
 
-export class SiListBox extends SiElement {
+class SiListBox extends SiElement {
   static get is() { return 'si-listbox' }
 
   static get properties() {
@@ -58,28 +58,30 @@ export class SiListBox extends SiElement {
     })
   }
 
+  static get styles() {
+    return css`
+      :host {
+        background: #FFF;
+        display: flex;
+        flex-direction: column;
+      }
+
+      ::slotted([selected]) {
+        background-color: var(--listbox-selected-background-color, #EEF);
+        font-weight: var(--listbox-selected-font-weight, bold);
+      }
+      ::slotted([focused]) {
+        background-color: rgba(0, 0, 0, 0.1);
+      }
+    `
+  }
+
   render() {
     return html`
-      <style>
-        :host {
-          background: #FFF;
-          display: flex;
-          flex-direction: column;
-        }
-
-        ::slotted([selected]) {
-          background-color: var(--listbox-selected-background-color, #EEF);
-          font-weight: var(--listbox-selected-font-weight, bold);
-        }
-        ::slotted([focused]) {
-          background-color: rgba(0, 0, 0, 0.1);
-        }
-      </style>
-
       <si-selector
         id="selector"
-        items=${this.items}
-        on-select=${this._onSelectorSelect.bind(this)}>
+        .items=${this.items}
+        @select=${this._onSelectorSelect.bind(this)}>
       </si-selector>
 
       <slot></slot>

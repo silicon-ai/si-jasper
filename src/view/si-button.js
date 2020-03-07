@@ -1,4 +1,4 @@
-import {SiElement, html} from '../core/si-element.js'
+import {SiElement, html, css} from '../core/si-element.js'
 
 import {shadowStyles, rgbaToGrayScale} from './si-styles.js'
 
@@ -28,51 +28,54 @@ export class SiButton extends SiElement {
     return fg > bg
   }
 
+  static get styles() {
+    return css`
+      ${shadowStyles}
+      :host {
+        display: inline-block;
+        border-radius: 3px;
+        background: white;
+        transition: all 0.3s ease-in-out;
+        text-align: center;
+        position: relative;
+        cursor: pointer;
+        height: 32px;
+      }
+
+      button {
+        background: inherit;
+        color: inherit;
+        border-radius: inherit;
+        text-transform: uppercase;
+        text-align: center;
+        display: inline-block;
+        font-size: 13px;
+        height: 32px;
+        line-height: 32px;
+        border: none;
+        cursor: pointer;
+      }
+
+      :host([raised]) {
+        box-shadow: var(--shadow-elevation-1);
+      }
+
+      :host([inverse]:hover) {
+        filter: contrast(80%) brightness(130%);
+      }
+
+      :host(:hover) {
+        filter: brightness(90%);
+      }
+
+      button:focus {
+        outline: none;
+      }
+    `
+  }
+
   render() {
     return html`
-      ${shadowStyles}
-      <style>
-        :host {
-          display: inline-block;
-          border-radius: 3px;
-          background: white;
-          transition: all 0.3s ease-in-out;
-          text-align: center;
-          position: relative;
-          cursor: pointer;
-          height: 32px;
-        }
-
-        button {
-          background: inherit;
-          color: inherit;
-          border-radius: inherit;
-          text-transform: uppercase;
-          text-align: center;
-          display: inline-block;
-          font-size: 13px;
-          height: 32px;
-          line-height: 32px;
-          border: none;
-          cursor: pointer;
-        }
-
-        :host([raised]) {
-          box-shadow: var(--shadow-elevation-1);
-        }
-
-        :host([inverse]:hover) {
-          filter: contrast(80%) brightness(130%);
-        }
-
-        :host(:hover) {
-          filter: brightness(90%);
-        }
-
-        button:focus {
-          outline: none;
-        }
-      </style>
       <button><slot></slot></button>
     `
   }
