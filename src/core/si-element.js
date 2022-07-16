@@ -1,5 +1,5 @@
-import {render as nativeRender, html, svg} from '../../node_modules/lit-html/lit-html.js'
-import {render as shadyRender} from '../../node_modules/lit-html/lib/shady-render.js'
+import {render as nativeRender, html, svg} from 'lit-html/lit-html.js'
+import {render as shadyRender} from 'lit-html/lib/shady-render.js'
 
 if (window.ShadyCSS) {
   var render = (tmpl, host) => shadyRender(tmpl, host.shadowRoot, host.constructor.is)
