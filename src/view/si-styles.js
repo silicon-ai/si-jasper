@@ -16,9 +16,9 @@ const shadowStyles = css`
       0 3px 1px -2px rgba(0, 0, 0, 0.2);
 
     --shadow-elevation-2:
-        0 3px 4px 0 rgba(0, 0, 0, 0.14),
-        0 1px 8px 0 rgba(0, 0, 0, 0.12),
-        0 3px 3px -2px rgba(0, 0, 0, 0.4);
+      0 3px 4px 0 rgba(0, 0, 0, 0.14),
+      0 1px 8px 0 rgba(0, 0, 0, 0.12),
+      0 3px 3px -2px rgba(0, 0, 0, 0.4);
 
     --shadow-elevation-3:
       0 4px 5px 0 rgba(0, 0, 0, 0.14),
@@ -106,6 +106,38 @@ const layoutStyles = css`
     -ms-flex: 1 1 0.000000001px;
     -webkit-flex: 1;
     flex: 1;
+    -webkit-flex-basis: 0.000000001px;
+    flex-basis: 0.000000001px;
+  }
+
+  .flex-2 {
+    -ms-flex: 2 2 0.000000001px;
+    -webkit-flex: 2;
+    flex: 2;
+    -webkit-flex-basis: 0.000000001px;
+    flex-basis: 0.000000001px;
+  }
+
+  .flex-3 {
+    -ms-flex: 3 3 0.000000001px;
+    -webkit-flex: 3;
+    flex: 3;
+    -webkit-flex-basis: 0.000000001px;
+    flex-basis: 0.000000001px;
+  }
+
+  .flex-4 {
+    -ms-flex: 4 4 0.000000001px;
+    -webkit-flex: 4;
+    flex: 4;
+    -webkit-flex-basis: 0.000000001px;
+    flex-basis: 0.000000001px;
+  }
+
+  .flex-5 {
+    -ms-flex: 5 5 0.000000001px;
+    -webkit-flex: 5;
+    flex: 5;
     -webkit-flex-basis: 0.000000001px;
     flex-basis: 0.000000001px;
   }

@@ -1,11 +1,23 @@
 
-class SiHttpRequest {
+export class SiHttpRequest {
   constructor(headers = []) {
     this.headers = headers
+    this.errorHander = null
   }
 
   withHeaders(headers) {
     this.headers = headers
+    return this
+  }
+
+  withHeader(key, val) {
+    if (!this.headers) this.headers = []
+    this.headers.push([key, val])
+    return this
+  }
+
+  onError(handler) {
+    this.errorHandler = handler
     return this
   }
 
@@ -32,6 +44,8 @@ class SiHttpRequest {
       request.setRequestHeader('Content-Type', 'application/json')
     }
 
+    if (this.errorHandler) promise.catch(this.errorHandler)
+
     try {
       request.send(data)
     }
@@ -43,6 +57,10 @@ class SiHttpRequest {
 
   get(url) {
     return this.send('GET', url)
+  }
+
+  stream(url, headers) {
+    return new EventSource(url, {headers: headers})
   }
 
   post(url, data) {
@@ -65,7 +83,7 @@ class SiHttpRequest {
 
 const _WebSocket = window.MozWebSocket ? window.MozWebSocket : window.WebSocket
 
-class SiSocket {
+export class SiSocket {
   constructor(url) {
     this._url = url
     this._buffer = []
@@ -122,5 +140,3 @@ class SiSocket {
   }
 }
 
-export { SiSocket }
-export { SiHttpRequest }

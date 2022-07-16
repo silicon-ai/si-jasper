@@ -29,29 +29,35 @@ export class SiButton extends SiElement {
   }
 
   static get styles() {
-    return css`
-      ${shadowStyles}
+    return [shadowStyles, css`
       :host {
-        display: inline-block;
-        border-radius: 3px;
+        border-radius: var(--corner-radius, 3px);
         background: white;
         transition: all 0.3s ease-in-out;
         text-align: center;
-        position: relative;
         cursor: pointer;
         height: 32px;
+        text-transform: uppercase;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
       }
 
       button {
+        width: 100%;
+        display: flex;
+        align-items: inherit;
+        justify-content: inherit;
+        gap: inherit;
         background: inherit;
         color: inherit;
         border-radius: inherit;
-        text-transform: uppercase;
-        text-align: center;
-        display: inline-block;
-        font-size: 13px;
-        height: 32px;
-        line-height: 32px;
+        font-weight: inherit;
+        text-transform: inherit;
+        text-align: inherit;
+        font-size: inherit;
+        height: inherit;
+        line-height: inherit;
         border: none;
         cursor: pointer;
       }
@@ -71,7 +77,7 @@ export class SiButton extends SiElement {
       button:focus {
         outline: none;
       }
-    `
+    `]
   }
 
   render() {

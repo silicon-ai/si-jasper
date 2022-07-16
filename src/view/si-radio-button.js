@@ -2,22 +2,27 @@ import {SiElement, html, css} from '../core/si-element.js'
 
 import './si-icon.js'
 import './si-icons.js'
+import './si-flexbox.js'
 
-class SiCheckbox extends SiElement {
-  static get is() { return 'si-checkbox' }
+class SiRadioButton extends SiElement {
+  static get is() { return 'si-radio-button' }
 
   static get properties() {
     return {
       value: String,
+      name: String,
       checked: Boolean,
       readonly: Boolean
     }
   }
 
-  _onInputChange(ev) {
-    console.log('checkbox::_onInputChange', ev.target.checked)
-    this.checked = ev.target.checked
+  ready() {
+    this.addEventListener('click', this._onClick.bind(this))
+  }
+
+  _onClick(ev) {
     ev.stopPropagation()
+    this.checked = true
     this.dispatchEvent(new CustomEvent('change', {
       detail: { checked: ev.target.checked }
     }))
@@ -27,20 +32,8 @@ class SiCheckbox extends SiElement {
     return css`
       :host {
         display: inline-block;
-        height: 24px;
         box-sizing: border-box;
         position: relative;
-      }
-
-      input {
-        opacity: 0;
-        position: absolute;
-        z-index: 1;
-        margin: 0;
-        top: 0px;
-        left: 0px;
-        width: 24px;
-        height: 24px;
       }
 
       si-icon {
@@ -50,18 +43,20 @@ class SiCheckbox extends SiElement {
   }
 
   render() {
+    console.log('render:', this.name, this.checked)
     return html`
-      <si-icon .icon="${this.checked ? "icons:check-box" : "icons:check-box-outline-blank"}"></si-icon>
+      <si-icon .icon="${this.checked ? "icons:radio-button-checked" : "icons:radio-button-unchecked"}"></si-icon>
       <input
         id="input"
-        type="checkbox"
+        type="hidden"
+        name=${this.name}
         .value=${this.value}
-        @change=${this._onInputChange.bind(this)}
         ?checked=${this.checked}
-        ?readonly=${this.readonly}></input>
-      <slot></slot>
+        ?readonly=${this.readonly}
+      />
+      <slot flex name="suffix"></slot>
     `
   }
 }
 
-SiCheckbox.define()
+SiRadioButton.define()

@@ -20,6 +20,16 @@ class SiInput extends SiElement {
     }
   }
 
+  constructor() {
+    super()
+    this.type = "text"
+    this.min = ""
+    this.max = ""
+    this.step = ""
+    //this.pattern = null this sucks a bit
+    this.placeholder = ""
+  }
+
   ready() {
     super.ready()
     const eventTypes = ['input', 'change']
@@ -59,57 +69,54 @@ class SiInput extends SiElement {
   static get styles() {
     return css`
       :host {
-        display: block;
-        border-bottom: 1px solid transparent;
-        transition: border 0.3s ease-in-out;
-        margin: 5px;
-      }
-
-      #container {
         display: flex;
+        transition: border 0.3s ease-in-out;
         flex-direction: row;
-        border-bottom: 1px solid #CCD;
+        align-items: center;
+        height: 40px;
+        box-sizing: content-box;
       }
 
       #input {
-        display: block;
         box-sizing: border-box;
+        display: block;
+        border-radius: inherit;
         border: none;
         outline: none;
-        width: 100%;
-        height: 24px;
-        font-size: 14px;
+        height: inherit;
+        font-size: inherit;
         cursor: inherit;
         color: inherit;
         background: inherit;
+        flex: 1;
+        margin: 0px 8px;
       }
 
-      :host(:focus-within), #container:focus-within {
+      ::-webkit-calendar-picker-indicator {
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 24 24"><path fill="%23bbbbbb" d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>');
+      }
+
+      :host(:focus-within) {
         outline: none;
-        border-bottom: 1px solid #667;
       }
     `
   }
 
   render() {
     return html`
-      <div id="container">
-        <slot name="prefix"></slot>
-        <input id="input"
-          .type=${this.type}
-          .value=${this.value || ""}
-          min=${this.min}
-          max=${this.max}
-          step=${this.step}
-          ?readonly=${this.readonly}
-          pattern=${this.pattern}
-          autocomplete=${this.autocomplete}
-          autocorrect=${this.autocorrect}
-          autocapitalize=${this.autocapitalize}
-          placeholder=${this.placeholder || ""}>
-        </input>
-        <slot name="suffix"></slot>
-      </div>
+      <slot name="prefix"></slot>
+      <input id="input"
+        .type=${this.type}
+        .value=${this.value || ""}
+        min=${this.min}
+        max=${this.max}
+        step=${this.step}
+        ?readonly=${this.readonly}
+        autocomplete=${this.autocomplete}
+        autocorrect=${this.autocorrect}
+        autocapitalize=${this.autocapitalize}
+        placeholder=${this.placeholder} />
+      <slot name="suffix"></slot>
     `
   }
 }

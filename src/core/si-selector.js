@@ -1,9 +1,9 @@
-import '../core/si-boot.js'
+import './si-array.js'
 
-import {SiElement, html, css} from '../core/si-element.js'
-import {SiAsync} from '../core/si-async.js'
+import {SiElement, html, css} from './si-element.js'
+import {SiAsync} from './si-async.js'
 
-class SiSelector extends SiElement {
+export class SiSelector extends SiElement {
 
   static get is() { return 'si-selector' }
 
@@ -11,6 +11,10 @@ class SiSelector extends SiElement {
     return {
       multi: Boolean,
       items: Array,
+      selection: {
+        type: Array,
+        value() { return [] }
+      }
     }
   }
 
@@ -19,30 +23,48 @@ class SiSelector extends SiElement {
     this._vector = []
   }
 
-  select(index, flag = true) {
-    console.log("si-selector::select", index, flag)
+  ready() {
+    if (this.selection.length > 0) {
+      this.selection.forEach((index) => {
+        this.select(index, true)
+      })
+    }
+  }
+
+  select(index, flag = true, notify = true) {
+    console.log("select", index, flag, notify, this.items)
     if (typeof index !== 'number') {
       if (!this.items.includes(index)) return
       index = this.items.indexOf(index)
     }
-    this.selectIndex(index, flag)
+    this.selectIndex(index, flag, notify)
   }
 
-  selectItem(item, flag = true) {
+  selectItem(item, flag = true, notify = true) {
     const index = this.items.indexOf(item)
-    if (index > -1) this.select(index, flag)
+    if (index > -1) this.select(index, flag, notify)
   }
 
-  selectIndex(index, flag = true) {
-    console.log('si-selector::selectIndex', index, flag, this._vector)
+  selectIndex(index, flag = true, notify = true) {
     if (this._vector[index] === Boolean(flag)) return
     if (!this.multi) this.clearSelection()
     this._vector[index] = flag
-    this._dispatchChangeEvent()
+    if (notify) this._dispatchChangeEvent()
   }
 
-  isSelected(item) {
-    const index = typeof item === 'number' ? item : this.items.indexOf(item)
+  isSelected(item, keyFun) {
+    let index = -1
+    if (typeof item === 'number') {
+      index = item
+    }
+    else if (keyFun) {
+      const items = this.items.map(keyFun)
+      index = items.indexOf(keyFun(item))
+    }
+    else {
+      index = this.items.indexOf(item)
+    }
+    if (index < 0) return false
     return Boolean(this._vector[index])
   }
 
@@ -66,7 +88,8 @@ class SiSelector extends SiElement {
 
   async _dispatchChangeEvent() {
     await SiAsync.debounce(this)
-    console.log('si-selector::_dispatchChangeEvent')
+    const selectedIndices = []
+    this._vector.forEach((v, i) => { if (v) selectedIndices.push(i) })
     this.dispatchEvent(
       new CustomEvent('select', {
         bubbles: true,
@@ -74,7 +97,8 @@ class SiSelector extends SiElement {
         cancelable: true,
         detail: {
           selection: [...this._vector],
-          selectedItems: this.selectedItems
+          selectedItems: this.selectedItems,
+          selectedIndices: selectedIndices
         }
       })
     )

@@ -1,5 +1,5 @@
-import {SiElement, html, css} from '../core/si-element.js'
-import {SiAsync} from '../core/si-async.js'
+import {SiElement, html, css} from './si-element.js'
+import {SiAsync} from './si-async.js'
 
 import './si-location.js'
 

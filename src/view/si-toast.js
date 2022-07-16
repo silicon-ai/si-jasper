@@ -1,5 +1,5 @@
 import {SiElement, html, css} from '../core/si-element.js'
-import {shadowStyles} from '../view/si-styles.js'
+import {shadowStyles} from './si-styles.js'
 
 class SiToast extends SiElement {
   static get is() { return 'si-toast' }
@@ -20,6 +20,7 @@ class SiToast extends SiElement {
       this._timeout = null
     }
     this.removeAttribute('opened')
+    window.setTimeout(() => this.text = "", 300)
   }
 
   flash() {
@@ -39,7 +40,7 @@ class SiToast extends SiElement {
         display: inline-block;
         box-sizing: border-box;
         position: fixed;
-        bottom: 0px;
+        bottom: -100px;
         left: 0px;
         z-index: 9;
         padding: 0px 24px;
@@ -50,7 +51,6 @@ class SiToast extends SiElement {
         transition: all 0.3s ease-in-out;
         overflow: hidden;
         margin: 12px;
-        transform: translateY(100px);
         text-align: center;
         min-height: 64px;
         min-width: 200px;
@@ -58,7 +58,7 @@ class SiToast extends SiElement {
       }
       :host([opened]) {
         opacity: 1;
-        transform: translateY(0px);
+        transform: translateY(-100px);
       }
       ${shadowStyles}
     `

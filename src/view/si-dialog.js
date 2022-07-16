@@ -1,6 +1,6 @@
 import {SiElement, html, css} from '../core/si-element.js'
 
-import {shadowStyles, layoutStyles} from '../view/si-styles.js'
+import {shadowStyles, layoutStyles} from './si-styles.js'
 
 class SiDialog extends SiElement {
   static get is() { return 'si-dialog' }
@@ -8,6 +8,7 @@ class SiDialog extends SiElement {
     return {
       backdrop: Boolean,
       modal: Boolean,
+      data: Object
     }
   }
 
@@ -24,7 +25,8 @@ class SiDialog extends SiElement {
     }
   }
 
-  open() {
+  open(data) {
+    this.data = data
     const cX = window.innerWidth / 2
     const cY = window.innerHeight / 2
 
@@ -44,7 +46,7 @@ class SiDialog extends SiElement {
   }
 
   close(reason) {
-    if (this.modal && reason == 'cancel') return
+    if (this.modal && reason === null) return
     this.style.display = 'none'
     this.dispatchEvent(
       new CustomEvent('confirm', {
@@ -56,7 +58,7 @@ class SiDialog extends SiElement {
 
   _onKeyDown(ev) {
     if (ev.key == 'Escape') {
-      return this.close('cancel')
+      return this.close(null)
     }
   }
 
@@ -79,7 +81,9 @@ class SiDialog extends SiElement {
         right: 0px;
         bottom: 0px;
         left: 0px;
-        background-color: rgba(0, 0, 0, 0.5);
+        background: black;
+        opacity: 0.5;
+        /*background-color: rgba(0, 0, 0, 0.5);*/
         z-index: 99;
       }
 
@@ -88,22 +92,15 @@ class SiDialog extends SiElement {
       }
 
       #header, #content, #footer {
-        padding: 10px;
-      }
-
-      #header:not(:empty) {
-        border-bottom: 1px solid #DDE;
-      }
-
-      #footer:not(:empty) {
-        border-top: 1px solid #DDE;
+        padding: 0px;
       }
 
       #container {
         z-index: 100;
         position: relative;
         height: 100%;
-        background-color: white;
+        background: inherit;
+        border-radius: inherit;
       }
 
       ${shadowStyles}
@@ -113,7 +110,7 @@ class SiDialog extends SiElement {
 
   render() {
     return html`
-      <div id="backdrop" on-mousedown=${(ev) => this.close('cancel')}></div>
+      <div id="backdrop" @mousedown=${(ev) => this.close(null)}></div>
 
       <div id="container" class="layout vertical shadow-elevation-6">
         <div id="header"><slot name="header"></slot></div>

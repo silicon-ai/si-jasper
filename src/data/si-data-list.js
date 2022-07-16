@@ -21,11 +21,12 @@ export class SiDataList extends SiElement {
 
   constructor() {
     super()
+    this.items = []
     this._insert = []
     this._remove = []
   }
 
-  async notifyDataChange() {
+  async notifyDataChange(notify=true) {
     await SiAsync.debounce(this, this.debounceDuration)
 
     const insert = this._insert
@@ -34,27 +35,35 @@ export class SiDataList extends SiElement {
     this._insert = []
     this._remove = []
 
-    this.dispatchEvent(
-      new CustomEvent('data-change', {
-        detail: {
-          insert: insert,
-          remove: remove
-        }
-      })
-    )
+    if (notify) {
+      this.dispatchEvent(
+        new CustomEvent('change', {
+          bubbles: true,
+          cancelable: true,
+          detail: {
+            insert: insert,
+            remove: remove
+          }
+        })
+      )
+    }
   }
 
-  setItems(items) {
-    this._remove = this.items
-    this._insert = items
+  setItems(items, notify=true) {
+    this._remove = this.items.map((item, index) => [item, index])
+    this._insert = items.map((item, index) => [item, index])
     this.items = items
-    this.notifyDataChange()
+    this.notifyDataChange(notify)
+  }
+  
+  getItems() {
+    return this.items
   }
 
-  clearItems() {
-    this._remove = this.items
+  clearItems(notify=true) {
+    this._remove = this.items.map((item, index) => [item, index])
     this.items = []
-    this.notifyDataChange()
+    this.notifyDataChange(notify)
   }
 
   getItemAt(index) {
@@ -62,12 +71,12 @@ export class SiDataList extends SiElement {
   }
 
   insertItem(item) {
-    this.insertItemAt(item, this.items.length)
+    this.insertItemAt(this.items.length, item)
   }
 
   insertItemAt(index, item) {
     this.items.splice(index, 0, item)
-    this._insert.append([item, index])
+    this._insert.push([item, index])
     this.notifyDataChange()
   }
 
@@ -84,7 +93,7 @@ export class SiDataList extends SiElement {
   removeItemAt(index) {
     if (index < this.items.length) {
       const [item] = this.items.splice(index, 1)
-      this._remove.append([item, index])
+      this._remove.push([item, index])
       this.notifyDataChange()
     }
   }
@@ -102,17 +111,17 @@ export class SiDataList extends SiElement {
   replaceItemAt(index, item) {
     if (index < this.items.length) {
       const [prev] = this.items.splice(index, 1, item)
-      this._insert.append([item, index])
-      this._remove.append([prev, index])
+      this._insert.push([item, index])
+      this._remove.push([prev, index])
       this.notifyDataChange()
     }
   }
 
   sort(sorter) {
     if (!sorter) sorter = (a, b) => a > b ? 1 : 0
-    this._remove = [...this.items]
+    this._remove = this.items.map((item, index) => [item, index])
     this.items.sort(sorter)
-    this._insert = [...this.items]
+    this._insert = this.items.map((item, index) => [item, index])
     this.notifyDataChange()
   }
 

@@ -1,8 +1,9 @@
 import {SiElement, html, css} from '../core/si-element.js'
+import { SiAsync } from '../core/si-async.js'
 
 import './si-icon.js'
 
-import {shadowStyles, rgbaToGrayScale} from '../view/si-styles.js'
+import {shadowStyles, rgbaToGrayScale} from './si-styles.js'
 
 class SiIconButton extends SiElement {
   static get is() { return 'si-icon-button' }
@@ -14,12 +15,19 @@ class SiIconButton extends SiElement {
         value() {
           return this._computeInverse()
         }
+      },
+      size: {
+        type: Number,
+        value() {
+          return 24
+        }
       }
     }
   }
 
-  ready() {
+  async ready() {
     super.ready()
+    await SiAsync.yieldThen
     if (this.inverse) this.setAttribute('inverse', '')
   }
 
@@ -31,8 +39,7 @@ class SiIconButton extends SiElement {
   }
 
   static get styles() {
-    return css`
-      ${shadowStyles}
+    return [shadowStyles, css`
       :host {
         display: -ms-flexbox;
         display: -webkit-flex;
@@ -43,8 +50,10 @@ class SiIconButton extends SiElement {
         align-items: center;
         justify-content: center;
         background: inherit;
-        color: inherit;
-        transition: all 0.3s ease-in-out;
+        color: var(--primary-icon-color, inherit);
+        transition-duration: 0.3s;
+        transition-timing-function: ease-in-out;
+        transition-property: filter;
         cursor: pointer;
       }
 
@@ -66,12 +75,12 @@ class SiIconButton extends SiElement {
       :host(:hover) {
         filter: brightness(90%);
       }
-    `
+    `]
   }
 
   render() {
     return html`
-      <si-icon .icon=${this.icon}></si-icon>
+      <si-icon style="width: ${this.size}px; height: ${this.size}px" .icon=${this.icon} .size=${this.size}></si-icon>
     `
   }
 }

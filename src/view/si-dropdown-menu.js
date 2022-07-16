@@ -10,21 +10,30 @@ class SiDropdownMenu extends SiElement {
   static get properties() {
     return {
       label: String,
+      placeholder: String,
       selected: {
         type: Number,
         observer(val, old) {
-          console.log('selectedItem::observer', this, val, old)
           if (val === undefined || val === -1) this.clearSelection()
         }
       },
-      selectedItem: {
-        type: Object,
-      }
+      selectedItem: Object,
+      _value: Object
     }
   }
 
   ready() {
     this._buffer = []
+    if (this.selected !== null && this.selected !== undefined) {
+      const listbox = this.querySelector('si-listbox')
+      if (this.selected == -1) {
+        listbox.clearSelection()
+      }
+      else {
+        listbox.selection = [this.selected]
+        //listbox.select(this.selected)
+      }
+    }
   }
 
   get items() {
@@ -33,8 +42,17 @@ class SiDropdownMenu extends SiElement {
     )
   }
 
+  select(index, flag = true) {
+    const listbox = this.querySelector('si-listbox')
+    listbox.clearSelection()
+    listbox.select(index, flag)
+  }
+
   clearSelection() {
     this.$.input.value = ''
+    this.value = undefined
+    const listbox = this.querySelector('si-listbox')
+    listbox.clearSelection()
   }
 
   _onFocus(ev) {
@@ -52,7 +70,7 @@ class SiDropdownMenu extends SiElement {
     this.$.dropdown.removeAttribute('open')
     this._clearFocused()
     const item = ev.detail.selectedItems[0]
-    this._setSelectedItem(item)
+    if (item !== undefined) this._setSelectedItem(item)
   }
 
   _setSelectedItem(item) {
@@ -66,6 +84,14 @@ class SiDropdownMenu extends SiElement {
         detail: { value, item, index }
       })
     )
+  }
+
+  get value() {
+    return this.$.input.value
+  }
+
+  set value(value) {
+    this._value = value
   }
 
   async _onKeyDown(ev) {
@@ -83,13 +109,15 @@ class SiDropdownMenu extends SiElement {
     const match = this._buffer.join('').toLowerCase()
     const values = items.map(n => n.textContent.trim())
 
-    const [found] = values.filter((v) =>
-      v.substr(0, match.length).toLowerCase() == match
-    )
+    const [found] = values.filter((v) => {
+      let frag = v.substring(0, match.length).toLowerCase()
+      return frag === match
+    })
 
     if (found) {
       items.forEach((n) => n.removeAttribute('focused'))
       items[values.indexOf(found)].setAttribute('focused', '')
+      items[values.indexOf(found)].scrollIntoView()
     }
 
     await SiAsync.debounce(this, 500)
@@ -106,7 +134,7 @@ class SiDropdownMenu extends SiElement {
   }
 
   static get styles() {
-    return css`
+    return [layoutStyles, shadowStyles, css`
       :host {
         position: relative;
         display: inline-block;
@@ -120,43 +148,44 @@ class SiDropdownMenu extends SiElement {
       #dropdown[open] {
         display: block;
         position: absolute;
-        top: 32px;
         left: 5px;
         right: 5px;
         z-index: 9;
       }
 
-      #input, #container {
+      #input {
         cursor: pointer !important;
       }
 
-      ${layoutStyles}
-      ${shadowStyles}
-    `
+      #input > si-icon {
+        height: inherit;
+        align-self: center;
+      }
+    `]
   }
 
   render() {
     return html`
-      <div id="container" class="layout horizontal">
-        <si-input class="flex" id="input"
-          tabindex="0"
-          placeholder$="${this.label}"
-          readonly=${true}
-          autocomplete="off"
-          autocorrect="off"
-          autocapitalize="none"
-          on-blur=${this._onBlur.bind(this)}
-          on-focus=${this._onFocus.bind(this)}
-          on-keydown=${this._onKeyDown.bind(this)}>
-          <si-icon
-            slot="suffix"
-            on-click=${this._onIconClick.bind(this)}
-            icon="icons:arrow-drop-down">
-          </si-icon>
-        </si-input>
-      </div>
-      <div id="dropdown" class="shadow-elevation-2" on-select=${this._onSelect.bind(this)}>
-        <slot name="dropdown-content"></slot>
+      <si-input id="input"
+        tabindex="0"
+        placeholder=${this.label || this.placeholder}
+        readonly=${true}
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="none"
+        @blur=${this._onBlur.bind(this)}
+        @focus=${this._onFocus.bind(this)}
+        .value=${this._value}
+        @keydown=${this._onKeyDown.bind(this)}>
+        <slot name="label" slot="label"></slot>
+        <si-icon
+          slot="suffix"
+          @click=${this._onIconClick.bind(this)}
+          icon="icons:arrow-drop-down">
+        </si-icon>
+      </si-input>
+      <div id="dropdown" class="shadow-elevation-2" @select=${this._onSelect.bind(this)}>
+        <slot></slot>
       </div>
     `
   }

@@ -4,9 +4,16 @@ export class SiItem extends SiElement {
   static get is() { return 'si-item' }
   static get properties() {
     return {
-
+      data: Object,
+      selected: Boolean
     }
   }
+
+  constructor() {
+    super()
+    this.selected = false
+  }
+
   ready() {
     super.ready()
   }
@@ -16,6 +23,8 @@ export class SiItem extends SiElement {
         padding: 4px;
         display: block;
         line-height: 28px;
+        color: var(--primary-color, #000);
+        background-color: inherit;
       }
     `
   }

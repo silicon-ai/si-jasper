@@ -8,8 +8,19 @@ class SiIcon extends SiElement {
   static get properties() {
     return {
       icon: String,
-      size: Number
+      size: {
+        type: Number,
+        value() {
+          return 24
+        }
+      }
     }
+  }
+
+  ready() {
+    super.ready()
+    this.style.width = this.size + 'px'
+    this.style.height = this.size + 'px'
   }
 
   cloneIcon() {
@@ -18,7 +29,7 @@ class SiIcon extends SiElement {
     if (!iconSet) {
       throw new Error(`icon set '${prefix}' not loaded`)
     }
-    return SiIconSet.registry[prefix].cloneIcon(icon)
+    return SiIconSet.registry[prefix].cloneIcon(icon, this.size)
   }
 
   static get styles() {

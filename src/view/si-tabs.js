@@ -9,6 +9,10 @@ class SiTabs extends SiElement {
       orientation: {
         type: String,
         value: "horizontal"
+      },
+      showSlide: {
+        type: Boolean,
+        value: true
       }
     }
   }
@@ -16,27 +20,28 @@ class SiTabs extends SiElement {
   ready() {
     super.ready()
     this.slide = this.shadowRoot.querySelector('#slide')
+    if (!this.showSlide) this.slide.style.display = 'none'
 
     this.setAttribute('tabindex', '0')
 
-    this.tabs.forEach((tab) => {
-      tab.setAttribute('tabindex', '-1')
-      tab.setAttribute('role', 'tab')
-      tab.addEventListener('click', async (e) => {
-        const index = this.tabs.indexOf(tab)
+    this.addEventListener('tab-click', async (ev) => {
+      ev.stopPropagation()
 
-        this.selected = index
+      let tab = ev.target
+      const index = this.tabs.indexOf(tab)
 
-        await SiAsync.yieldThen
-        this.dispatchEvent(
-          new CustomEvent("select", {
-            compose: true,
-            bubbles: true,
-            detail: index
-          })
-        )
-      })
+      this.selected = index
+
+      await SiAsync.yieldThen
+      this.dispatchEvent(
+        new CustomEvent("select", {
+          compose: true,
+          bubbles: true,
+          detail: index
+        })
+      )
     })
+    if (this.selectedTab) this._updateSlide()
   }
 
   get tabs() {
@@ -50,9 +55,14 @@ class SiTabs extends SiElement {
       tab.setAttribute('tabindex', '-1')
     })
     this._selected = index
+
+    if (index == -1) return
     this.selectedTab.setAttribute('selected', '')
     this.selectedTab.setAttribute('tabindex', '0')
-    this._updateSlide()
+
+    //FIXME: FoUC on slide offset measurement
+    setTimeout(_ => this._updateSlide(), 50)
+    window.addEventListener('resize', _ => this._updateSlide())
   }
 
   get selected() {
@@ -69,7 +79,7 @@ class SiTabs extends SiElement {
       case "vertical":
         this.slide.style.top = this.selectedTab.offsetTop + 'px'
         this.slide.style.height = this.selectedTab.offsetHeight + 'px'
-        this.slide.style.left = this.selectedTab.offsetWidth + 'px'
+        this.slide.style.left = '0px'// (this.selectedTab.offsetWidth - 2) + 'px'
         break
     }
   }
@@ -107,7 +117,7 @@ class SiTabs extends SiElement {
         background: var(--slide-color-dark, 'yellowgreen');
         width: 2px;
         top: 0px;
-        right: 0px;
+        left: 0px;
         transition: top 0.3s ease-out, height 0.3s ease-out;
         position: absolute;
       }

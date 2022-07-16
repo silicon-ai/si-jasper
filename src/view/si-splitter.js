@@ -49,7 +49,7 @@ class SiSplitter extends SiTrackableElement {
         this.nextElementSibling,
         this.previousElementSibling
       ]
-      elems.forEach((elem) => elem.style.overflow = 'hidden')
+      elems.forEach((elem) => { if (elem && elem.style) elem.style.overflow = 'hidden' })
     }
   }
 

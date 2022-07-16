@@ -14,9 +14,11 @@ class SiPanel extends SiFlexBox {
         -webkit-flex-direction: column;
         flex-direction: column;
         border-radius: 3px;
+        align-self: stretch;
       }
 
-      #header, #content, #footer {
+      ::slotted(*) {
+        padding: 10px;
       }
 
       #header, #footer: {
@@ -25,19 +27,16 @@ class SiPanel extends SiFlexBox {
 
       #header ::slotted(:not(:empty)) {
         display: static;
-        border-bottom: 1px solid #DDE;
+        border-bottom: 1px solid var(--border-color);
         padding: 10px;
+        border-radius: 3px 3px 0px 0px;
       }
 
       #footer ::slotted(:not(:empty)) {
         display: static;
-        border-top: 1px solid #DDE;
+        border-top: 1px solid var(--border-color);
         padding: 10px;
-      }
-
-      #content {
-        position: relative;
-        padding: 10px;
+        border-radius: 0px 0px 3px 3px;
       }
 
       ${super.styles}
@@ -48,7 +47,7 @@ class SiPanel extends SiFlexBox {
   render() {
     return html`
       <div id="header"><slot name="header"></slot></div>
-      <div id="content" flex><slot></slot></div>
+      <slot></slot>
       <div id="footer"><slot name="footer"></slot></div>
     `
   }

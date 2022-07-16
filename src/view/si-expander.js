@@ -28,17 +28,19 @@ class SiExpander extends SiElement {
       :host {
         display: block;
         line-height: 24px;
+        position: relative;
       }
 
       #body {
         overflow: hidden;
         height: 0px;
-        padding-left: 24px;
         line-height: 24px;
+        width: 100%;
       }
 
       :host([opened]) #body {
         height: auto;
+        width: 100%;
       }
     `
   }

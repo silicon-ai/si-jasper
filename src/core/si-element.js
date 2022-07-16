@@ -1,7 +1,6 @@
 import {render as nativeRender, html, svg} from '../../node_modules/lit-html/lit-html.js'
 import {render as shadyRender} from '../../node_modules/lit-html/lib/shady-render.js'
 
-
 if (window.ShadyCSS) {
   var render = (tmpl, host) => shadyRender(tmpl, host.shadowRoot, host.constructor.is)
 }
@@ -12,6 +11,8 @@ else {
 
 const state = Symbol('state')
 const dollar = Symbol('$')
+const nagle = Symbol('nagle')
+const connected = Symbol('connected')
 
 
 class SiElement extends HTMLElement {
@@ -24,6 +25,14 @@ class SiElement extends HTMLElement {
   static get state() { return state }
 
   static define(name) {
+    const traits = this.traits || []
+
+    traits.forEach((trait) => {
+      Object.keys(trait).forEach((key) => {
+        this.prototype[key] = trait[key]
+      })
+    })
+
     const properties = this.properties || {}
 
     this.observedAttributes = []
@@ -47,21 +56,30 @@ class SiElement extends HTMLElement {
     customElements.define(name || this.is, this)
   }
 
+  requestUpdate() {
+    if (!this[connected]) return
+    this.flushState()
+  }
+
   flushState() {
     const result = this.render(this[state])
     if (result) render(result, this)
   }
 
   insertStyles() {
-    const styles = this.constructor.styles
+    let styles = this.constructor.styles
     if (styles) {
-      const style = document.createElement('style')
-      style.textContent = styles
-      this.shadowRoot.appendChild(style)
+      if (!Array.isArray(styles)) styles = [styles]
+      styles.forEach((s) => {
+        const style = document.createElement('style')
+        style.textContent = s
+        this.shadowRoot.appendChild(style)
+      })
     }
   }
 
-  async connectedCallback() {
+  connectedCallback() {
+    this[connected] = true
     this.attached()
     this.flushState()
     this.insertStyles()
@@ -69,7 +87,9 @@ class SiElement extends HTMLElement {
   }
 
   attributeChangedCallback(name, oldVal, newVal) {
-    this[camelCase(name)] = newVal
+    if (this.constructor.observedAttributes.includes(name)) {
+      this[camelCase(name)] = newVal
+    }
   }
 
   get $() {
@@ -225,17 +245,19 @@ function defineSetter(prototype, key, property) {
 
     return function set(val) {
       if (property.type === Boolean && val === '') val = true
+      if (this[state][key] === val) return
       let old = this[state][key]
       this[state][key] = val
       observer.call(this, val, old)
-      this.flushState()
+      this.requestUpdate()
     }
   }
 
   return function set(val) {
     if (property.type === Boolean && val === '') val = true
+    if (this[state][key] === val) return
     this[state][key] = val
-    this.flushState()
+    this.requestUpdate()
   }
 }
 
@@ -252,4 +274,4 @@ function css(strings, ...values) {
   return values.reduce((acc, v, idx) => acc + String(v) + strings[idx + 1], strings[0])
 }
 
-export { SiElement, SiTrackableElement, render, html, svg, css, state }
+export { SiElement, SiTrackableElement, render, html, svg, css, state, camelCase, dashCase }

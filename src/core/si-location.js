@@ -1,4 +1,4 @@
-import {SiElement, html} from '../core/si-element.js'
+import {SiElement, html} from './si-element.js'
 
 class SiLocation extends SiElement {
   static get is() { return "si-location" }

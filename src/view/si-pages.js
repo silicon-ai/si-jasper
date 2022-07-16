@@ -5,11 +5,12 @@ class SiPages extends SiElement {
 
   set selected(index) {
     if (index === undefined) return
+    this._selected = index
     for (const child of this.children) {
       child.classList.remove('si-page-selected')
     }
+    if (index === -1) return
     this.children[index].classList.add('si-page-selected')
-    this._selected = index
   }
 
   get selected() {
@@ -29,7 +30,7 @@ class SiPages extends SiElement {
     `
   }
 
-  render(props) {
+  render() {
     return html`
       <slot></slot>
     `
