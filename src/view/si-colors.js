@@ -199,12 +199,12 @@ function convertToPercentage(n) {
   return n;
 }
 function inputToRGB(color) {
-  s = convertToPercentage(color.s);
-  v = convertToPercentage(color.v);
-  rgb = hsvToRgb(color.h, s, v);
-  ok = true;
-  format = 'hsv';
-  a = boundAlpha(a);
+  let s = convertToPercentage(color.s);
+  let v = convertToPercentage(color.v);
+  let rgb = hsvToRgb(color.h, s, v);
+  let ok = true;
+  let format = 'hsv';
+  let a = boundAlpha(a);
   return {
       ok: ok,
       format: color.format || format,
