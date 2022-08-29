@@ -29,7 +29,7 @@ class SiElement extends HTMLElement {
 
     traits.forEach((trait) => {
       Object.keys(trait).forEach((key) => {
-        this.prototype[key] = trait[key]
+        if (key !== 'connectedCallback') this.prototype[key] = trait[key]
       })
     })
 
@@ -73,6 +73,7 @@ class SiElement extends HTMLElement {
 
   connectedCallback() {
     this[connected] = true
+    this.initTraits()
     this.attached()
     this.flushState()
     this.ready()
@@ -95,6 +96,13 @@ class SiElement extends HTMLElement {
       })
     }
     return this[dollar]
+  }
+
+  initTraits() {
+    const traits = this.traits || []
+    traits.forEach(trait => {
+      if (trait.connectedCallback) trait.connectedCallback.apply(this)
+    })
   }
 
   attached() { }

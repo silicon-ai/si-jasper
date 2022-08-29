@@ -1,4 +1,5 @@
 export * from './src/core/si-async.js'
+export * from './src/core/si-command.js'
 export * from './src/core/si-selector.js'
 export * from './src/core/si-boot.js'
 export * from './src/core/si-array.js'
