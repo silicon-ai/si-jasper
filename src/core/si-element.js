@@ -63,18 +63,11 @@ class SiElement extends HTMLElement {
 
   flushState() {
     const result = this.render(this[state])
-    if (result) render(result, this)
-  }
-
-  insertStyles() {
-    let styles = this.constructor.styles
-    if (styles) {
+    if (result) {
+      let styles = this.constructor.styles
       if (!Array.isArray(styles)) styles = [styles]
-      styles.forEach((s) => {
-        const style = document.createElement('style')
-        style.textContent = s
-        this.shadowRoot.appendChild(style)
-      })
+      styles = styles.join("\n")
+      render(html`<style>${styles}</style>${result}`, this)
     }
   }
 
@@ -82,7 +75,6 @@ class SiElement extends HTMLElement {
     this[connected] = true
     this.attached()
     this.flushState()
-    this.insertStyles()
     this.ready()
   }
 
