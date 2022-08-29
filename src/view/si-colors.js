@@ -185,6 +185,35 @@ function getValue(hsv, i, light) {
   return Number(value.toFixed(2));
 }
 
+function parseIntFromHex(val) {
+  return parseInt(val, 16);
+}
+function rgbToRgb(r, g, b) {
+  return {
+      r: bound01(r, 255) * 255,
+      g: bound01(g, 255) * 255,
+      b: bound01(b, 255) * 255,
+  };
+}
+var hex6 = /^#?([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$/
+
+function stringInputToObject(color) {
+  color = color.trim().toLowerCase();
+  if (color.length === 0) {
+      return false;
+  }
+  let match = hex6.exec(color);
+  if (match) {
+      return {
+          r: parseIntFromHex(match[1]),
+          g: parseIntFromHex(match[2]),
+          b: parseIntFromHex(match[3]),
+          format: 'hex',
+      };
+  }
+  return false;
+}
+
 function boundAlpha(a) {
   a = parseFloat(a);
   if (isNaN(a) || a < 0 || a > 1) {
@@ -192,19 +221,91 @@ function boundAlpha(a) {
   }
   return a;
 }
+
 function convertToPercentage(n) {
   if (n <= 1) {
       return "".concat(Number(n) * 100, "%");
   }
   return n;
 }
-function inputToRGB(color) {
-  let s = convertToPercentage(color.s);
-  let v = convertToPercentage(color.v);
-  let rgb = hsvToRgb(color.h, s, v);
-  let ok = true;
-  let format = 'hsv';
-  let a = boundAlpha(a);
+function isOnePointZero(n) {
+  return typeof n === 'string' && n.indexOf('.') !== -1 && parseFloat(n) === 1;
+}
+function isPercentage(n) {
+  return typeof n === 'string' && n.indexOf('%') !== -1;
+}
+function bound01(n, max) {
+  if (isOnePointZero(n)) {
+      n = '100%';
+  }
+  var isPercent = isPercentage(n);
+  n = max === 360 ? n : Math.min(max, Math.max(0, parseFloat(n)));
+  if (isPercent) {
+      n = parseInt(String(n * max), 10) / 100;
+  }
+  if (Math.abs(n - max) < 0.000001) {
+      return 1;
+  }
+  if (max === 360) {
+      n = (n < 0 ? (n % max) + max : n % max) / parseFloat(String(max));
+  }
+  else {
+      n = (n % max) / parseFloat(String(max));
+  }
+  return n;
+}
+
+function hsvToRgb(h, s, v) {
+  h = bound01(h, 360) * 6;
+  s = bound01(s, 100);
+  v = bound01(v, 100);
+  var i = Math.floor(h);
+  var f = h - i;
+  var p = v * (1 - s);
+  var q = v * (1 - f * s);
+  var t = v * (1 - (1 - f) * s);
+  var mod = i % 6;
+  var r = [v, q, p, p, t, v][mod];
+  var g = [t, v, v, q, p, p][mod];
+  var b = [p, p, t, v, v, q][mod];
+  return { r: r * 255, g: g * 255, b: b * 255 };
+}
+export function inputToRGB(color) {
+  var rgb = { r: 0, g: 0, b: 0 };
+  var a = 1;
+  var s = null;
+  var v = null;
+  var l = null;
+  var ok = false;
+  var format = false;
+  if (typeof color === 'string') {
+      color = stringInputToObject(color);
+  }
+  if (typeof color === 'object') {
+      if (color.r != null && color.g != null && color.b != null) {
+          rgb = rgbToRgb(color.r, color.g, color.b);
+          ok = true;
+          format = String(color.r).substr(-1) === '%' ? 'prgb' : 'rgb';
+      }
+      else if (color.h != null && color.s != null && color.v != null) {
+          s = convertToPercentage(color.s);
+          v = convertToPercentage(color.v);
+          rgb = hsvToRgb(color.h, s, v);
+          ok = true;
+          format = 'hsv';
+      }
+      else if (color.h != null && color.s != null && color.l != null) {
+          s = convertToPercentage(color.s);
+          l = convertToPercentage(color.l);
+          rgb = hslToRgb(color.h, s, l);
+          ok = true;
+          format = 'hsl';
+      }
+      if (Object.prototype.hasOwnProperty.call(color, 'a')) {
+          a = color.a;
+      }
+  }
+  a = boundAlpha(a);
   return {
       ok: ok,
       format: color.format || format,
@@ -214,7 +315,9 @@ function inputToRGB(color) {
       a: a,
   };
 }
-
+function pad2(c) {
+  return c.length === 1 ? '0' + c : String(c);
+}
 export function generate(color) {
   var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
   var patterns = [];
