@@ -32,7 +32,7 @@ export class SiIconSet extends SiElement {
     return iconSet
   }
 
-  cloneIcon(name, size = 24) {
+  cloneIcon(name, size) {
     let sz = size || this.size || 24
     let svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
   
