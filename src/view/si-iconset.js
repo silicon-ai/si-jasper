@@ -32,11 +32,10 @@ export class SiIconSet extends SiElement {
     return iconSet
   }
 
-  cloneIcon(name, size) {
-    let sz = size || this.size || 24
+  cloneIcon(name) {
     let svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
   
-    svg.setAttribute('viewBox', `0 0 ${sz} ${sz}`)
+    svg.setAttribute('viewBox', `0 0 ${this.size} ${this.size}`)
     svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
     svg.setAttribute('focusable', 'false');
 

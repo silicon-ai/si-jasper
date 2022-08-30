@@ -29,7 +29,7 @@ class SiIcon extends SiElement {
     if (!iconSet) {
       throw new Error(`icon set '${prefix}' not loaded`)
     }
-    return SiIconSet.registry[prefix].cloneIcon(icon, this.size)
+    return SiIconSet.registry[prefix].cloneIcon(icon)
   }
 
   static get styles() {
