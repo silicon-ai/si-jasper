@@ -137,7 +137,6 @@ function getHue(hsv, i, light) {
 }
 
 function getSaturation(hsv, i, light) {
-  // grey color don't change saturation
   if (hsv.h === 0 && hsv.s === 0) {
     return hsv.s;
   }
@@ -156,7 +155,6 @@ function getSaturation(hsv, i, light) {
   if (saturation > 1) {
     saturation = 1;
   }
-
 
   if (light && i === lightColorCount && saturation > 0.1) {
     saturation = 0.1;
@@ -270,7 +268,8 @@ function hsvToRgb(h, s, v) {
   var b = [p, p, t, v, v, q][mod];
   return { r: r * 255, g: g * 255, b: b * 255 };
 }
-export function inputToRGB(color) {
+
+function inputToRGB(color) {
   var rgb = { r: 0, g: 0, b: 0 };
   var a = 1;
   var s = null;
@@ -318,6 +317,7 @@ export function inputToRGB(color) {
 function pad2(c) {
   return c.length === 1 ? '0' + c : String(c);
 }
+
 export function generate(color) {
   var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
   var patterns = [];
