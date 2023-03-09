@@ -28,7 +28,7 @@ class SiLocation extends SiElement {
   }
 
   _parseHash(hash) {
-    return window.decodeURIComponent(hash.substr(1))
+    return window.decodeURIComponent(hash.substring(1))
   }
 }
 

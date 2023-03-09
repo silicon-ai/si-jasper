@@ -67,16 +67,18 @@ class SiElement extends HTMLElement {
       let styles = this.constructor.styles
       if (!Array.isArray(styles)) styles = [styles]
       styles = styles.join("\n")
-      render(html`<style>${styles}</style>${result}`, this)
+      Promise.resolve(result).then((result) => {
+        render(html`<style>${styles}</style>${result}`, this)
+      })
     }
+    return Promise.resolve()
   }
 
   connectedCallback() {
     this[connected] = true
     this.initTraits()
     this.attached()
-    this.flushState()
-    this.ready()
+    this.flushState().then(_ => this.ready())
   }
 
   attributeChangedCallback(name, oldVal, newVal) {

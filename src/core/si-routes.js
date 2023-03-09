@@ -18,8 +18,8 @@ class SiRoutes extends SiElement {
       this._matchRoutes(ev.detail)
     })
 
-    await SiAsync.afterRender
-    this._matchRoutes(window.location.hash.substr(1))
+    await SiAsync.yieldThen
+    this._matchRoutes(window.location.hash.substring(1))
   }
 
   get routes() {
@@ -89,7 +89,7 @@ class SiRoute extends SiElement {
       let pathFrag = pathFrags[i]
       let hashFrag = hashFrags[i]
       if (pathFrag[0] == ':') {
-        let key = pathFrag.substr(1)
+        let key = pathFrag.substring(1)
         detail.params[key] = hashFrag
       }
       else if (pathFrag !== hashFrag) {

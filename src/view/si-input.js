@@ -90,6 +90,7 @@ class SiInput extends SiElement {
         background: inherit;
         flex: 1;
         margin: 0px 8px;
+        min-width: 1px;
       }
 
       ::-webkit-calendar-picker-indicator {
