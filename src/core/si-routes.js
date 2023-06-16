@@ -35,6 +35,10 @@ class SiRoutes extends SiElement {
     for (const route of this.routes) {
       const detail = route.match(hash)
       if (detail) {
+        route.dispatchEvent(new CustomEvent('route', {
+          bubbles: true,
+          detail: detail
+        }))
         this.dispatchEvent(new CustomEvent("route-changed", {
           bubbles: true,
           detail: detail
